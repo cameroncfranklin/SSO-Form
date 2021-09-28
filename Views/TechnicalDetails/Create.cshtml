@@ -1,0 +1,710 @@
+﻿@model SSORequestApplication.ViewModels.TechnicalDetailsViewModel
+
+@{
+    Layout = "_Layout";
+    ViewBag.title = "SSO Request: Technical Details";
+    // this dictionary holds the names and friendly names for all attributes
+}
+
+<div class="row">
+    <h1 class="col" id="title">
+        @ViewData["title"]
+    </h1>
+</div>
+
+<form asp-controller="TechnicalDetails" asp-action="Create" method="post" role="form">
+    <!--This is commented out for typical use, uncomment for extra validation info when troubleshooting-->
+    <!--Html.ValidationSummary()-->
+    <div class="row">
+        <!--these h2 tags show the user the name of the application and who made the request-->
+        <h2 class="col-md-12" id="app">Application: @TempData.Peek("app")</h2>
+        <h2 class="col-md-12" id="req">Requester: @TempData.Peek("req")</h2>
+    </div>
+    <div class="form-group col-md-12 text-center" id="sendToTech">
+        <!--This div is for the button that allows the user to send the form to the Technical contact if they can't complete it-->
+        <a id="sendToTechInput" class="btn btn-default" href="@TempData.Peek("sendToLink")" role="button">Send To Technical Contact </a>
+    </div>
+    <!--SSO Protocol fieldset-->
+    <fieldset class="row">
+        <legend>SSO Protocol</legend>
+        <div class="col-md-12"></div>
+        <!--Protocol?-->
+        <div class="form-group col-md-12">
+            <label>What protocol does the application use?<span class="text-danger">*</span></label>
+            <div>
+                <label><input asp-for="Protocol" type="radio" value="CAS" id="cas" /> CAS </label>
+                <label><input asp-for="Protocol" type="radio" value="SAML" id="saml" /> SAML </label>
+            </div>
+        </div>
+        <div class="form-group col-md-12">
+            <label>Are there separate test/development and production instances of this application?<span class="text-danger">*</span></label>
+            <div>
+                <label><input asp-for="ProdAndDev" type="radio" value="true" id="pdYes" checked="checked" /> Yes </label>
+                <label><input asp-for="ProdAndDev" type="radio" value="false" id="pdNo" /> No </label>
+            </div>
+        </div>
+    </fieldset>
+    <fieldset class="row" id="base">
+        <legend>Base URL</legend>
+        <!--Base Developer URL-->
+        <div class="form-group col-md-12">
+            <label id="noProdDev1">Base URL<span class="text-danger">*</span></label>
+            <label id="prodDev1">Developer Base URL<span class="text-danger">*</span></label>
+            <input asp-for="BaseUrlDev" class="form-control" id="baseDevInput" />
+            <span asp-validation-for="BaseUrlDev" class="text-danger"></span>
+        </div>
+        <!--Base Production URL-->
+        <div class="form-group col-md-12" id="baseProd">
+            <label>Production Base URL<span class="text-danger">*</span></label>
+            <input asp-for="BaseUrlProd" class="form-control" id="baseProdInput" />
+            <span asp-validation-for="BaseUrlProd" class="text-danger"></span>
+        </div>
+    </fieldset>
+
+    <fieldset class="row" id="samlInfo">
+        <legend>Service Provider Information for SAML</legend>
+        <!--asking for what form the user will input their info-->
+        <div class="form-group col-md-12">
+            <label>
+                How will you be providing Service Provider information? (Static URL is preferred)
+                <span class="text-danger">*</span>
+            </label>
+            <div>
+                <label>
+                    <input asp-for="SAMLInfo" type="radio" value="saml1" id="saml1" />
+                    Specify a static URL to Metadata
+                </label>
+                <label id="samlDefault">
+                    <input asp-for="SAMLInfo" type="radio" value="none" id="samlDefault" />
+                    Default
+                </label>
+            </div>
+            <div>
+                <label>
+                    <input asp-for="SAMLInfo" type="radio" value="saml3" id="saml3" />
+                    Paste raw XML for metadata
+                </label>
+                <span asp-validation-for="SAMLInfo" class="text-danger"></span>
+            </div>
+            <div>
+                <label>
+                    <input asp-for="SAMLInfo" type="radio" value="saml2" id="saml2" />
+                    Enter the ACS URL and Entity ID
+                </label>
+            </div>
+        </div>
+        <!--ACS Developer URL-->
+        <div class="form-group col-md-12" id="acsDev">
+            <label id="noProdDev2">ACS URL<span class="text-danger">*</span></label>
+            <label id="prodDev2">Development ACS URL<span class="text-danger">*</span></label>
+            <input asp-for="AcsUrlDev" class="form-control" id="acsDevInput" />
+            <span asp-validation-for="AcsUrlDev" class="text-danger"></span>
+        </div>
+        <!--ACS Production URL-->
+        <div class="form-group col-md-12" id="acsProd">
+            <label>Production ACS URL<span class="text-danger">*</span></label>
+            <input asp-for="AcsUrlProd" class="form-control" id="acsProdInput" />
+            <span asp-validation-for="AcsUrlProd" class="text-danger"></span>
+        </div>
+        <!--Developer Entity ID-->
+        <div class="form-group col-md-12" id="entityDev">
+            <label id="noProdDev3">Entity ID<span class="text-danger">*</span></label>
+            <label id="prodDev3">Developer Entity ID<span class="text-danger">*</span></label>
+            <input asp-for="EntityUrlDev" class="form-control" id="entityDevInput" />
+            <span asp-validation-for="EntityUrlDev" class="text-danger"></span>
+        </div>
+        <!--Production Entity ID-->
+        <div class="form-group col-md-12" id="entityProd">
+            <label>Production Entity ID<span class="text-danger">*</span></label>
+            <input asp-for="EntityUrlProd" class="form-control" id="entityProdInput" />
+            <span asp-validation-for="EntityUrlProd" class="text-danger"></span>
+        </div>
+        <!--Development Metadata URL-->
+        <div class="form-group col-md-12" id="metadataDev">
+            <label id="noProdDev4">Metadata file URL<span class="text-danger">*</span></label>
+            <label id="prodDev4">Development Metadata file URL<span class="text-danger">*</span></label>
+            <input asp-for="MetadataDev" type="text" class="form-control" id="metadataDevInput" />
+            <span asp-validation-for="MetadataDev" class="text-danger"></span>
+        </div>
+        <!--Production Metadata URL-->
+        <div class="form-group col-md-12" id="metadataProd">
+            <label>Production Metadata file URL<span class="text-danger">*</span></label>
+            <input asp-for="MetadataProd" type="text" class="form-control" id="metadataProdInput" />
+            <span asp-validation-for="MetadataProd" class="text-danger"></span>
+        </div>
+        <!--Raw XML Metadata Dev-->
+        <div class="form-group col-md-12" id="metadataXMLDev">
+            <label id="noProdDev5">Raw Metadata XML<span class="text-danger">*</span></label>
+            <label id="prodDev5">Raw Development Metadata XML<span class="text-danger">*</span></label>
+            <textarea asp-for="MetadataXMLDev" rows="10" class="form-control" id="metadataXMLDevInput"></textarea>
+            <span asp-validation-for="MetadataXMLDev" class="text-danger"></span>
+        </div>
+        <!--Raw XML Metadata Prod-->
+        <div class="form-group col-md-12" id="metadataXMLProd">
+            <label>Raw Production Metadata XML<span class="text-danger">*</span></label>
+            <textarea asp-for="MetadataXMLProd" rows="10" class="form-control" id="metadataXMLProdInput"></textarea>
+            <span asp-validation-for="MetadataXMLProd" class="text-danger"></span>
+        </div>
+    </fieldset>
+    <!--User Attribute-->
+    <fieldset class="row" id="userAttribute">
+        <legend>User Attribute</legend>
+        <div class="form-group col-sm-12">
+            <label for="uniqueIdAttrInput">Attribute<span class="text-danger">*</span></label>
+            <select asp-for="UniqueIdAttr" class="form-control" id="uniqueIdAttrInput">
+                <option value="">Choose an attribute</option>
+                @foreach (KeyValuePair<string, string> pair in Model.AttrDict)
+                {
+                    <option value="@pair.Key">@pair.Value</option>
+                }
+            </select>
+            <span asp-validation-for="UniqueIdAttr" class="text-danger"></span>
+        </div>
+        <div class="form-group col-sm-12">
+            <label for="uniqueIdSpInInput">Special Instructions (e.g. append @@sampleuniversity.edu)</label>
+            <input asp-for="UniqueIdSpIn" type="text" class="form-control" id="uniqueIdSpInInput" />
+            <span asp-validation-for="UniqueIdSpIn" class="text-danger"></span>
+        </div>
+
+    </fieldset>
+    <!--NameID-->
+    <fieldset class="row" id="nameID">
+        <legend>NameID</legend>
+        <div class="form-group col-sm-12">
+            <label for="Format">Format<span class="text-danger">*</span></label>
+            <select asp-for="UniqueIdAttr" class="form-control" id="uniqueIdAttrInput">
+                {
+                <option id="opTransient" value="transient">urn:oasis:names:tc:SAML:2.0:nameid-format:transient </option>
+                <option id="opEmail" value="emailAddress">urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</option>
+                <option id="opUnspecified" value="unspecified">urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</option>
+                }
+            </select>
+        </div>
+        <div class="form-group col-sm-12" id="attributeIn">
+            <label for="uniqueIdAttrInput">Attribute<span class="text-danger">*</span></label>
+            <select asp-for="UniqueIdAttr" class="form-control" id="uniqueIdAttrInput">
+                <option value="">Choose an attribute</option>
+                @foreach (KeyValuePair<string, string> pair in Model.AttrDict)
+                {
+                    <option value="@pair.Key">@pair.Value</option>
+                }
+            </select>
+            <span asp-validation-for="UniqueIdAttr" class="text-danger"></span>
+        </div>
+        <div class="form-group col-sm-12" id="specialIn">
+            <label for="uniqueIdSpInInput">Special Instructions (e.g. append @@sampleuniversity.edu)</label>
+            <input asp-for="UniqueIdSpIn" type="text" class="form-control" id="uniqueIdSpInInput" />
+            <span asp-validation-for="UniqueIdSpIn" class="text-danger"></span>
+        </div>
+
+    </fieldset>
+
+    <div class="col-sm">
+        <label for="moreAttr">Release Additional Attributes</label>
+        <input asp-for="MoreAttr" type="checkbox" id="moreAttr" />
+    </div>
+
+    <fieldset class="row" id="attributeRelease">
+        <legend>Attribute Release Information</legend>
+        <label class="col-md-12">
+            Choose attributes to be released, what name to release them with, and any special instructions (e.g. append @@sampleuniversity.edu)
+        </label>
+        <div id="attrAppend">
+            <!--Attribute 0-->
+            <div class="form-group col-sm-4" id="attr0">
+                <label for="attr1Input">Attribute</label>
+                <select asp-for="Attributes[0].Attr" onchange="releaseUpdate(0)" class="form-control" id="attr0Input">
+                    <option value="">Choose an attribute</option>
+                    @foreach (KeyValuePair<string, string> pair in Model.AttrDict)
+                    {
+                        <option value="@pair.Key">@pair.Value</option>
+                    }
+                </select>
+                <span asp-validation-for="Attributes[0].Attr" class="text-danger"></span>
+            </div>
+            <div class="form-group col-sm-4" id="attr0Rel">
+                <label for="attr0RelInput">Release Name</label>
+                <input asp-for="Attributes[0].AttrRel" type="text" class="form-control" id="attr0RelInput" />
+                <span asp-validation-for="Attributes[0].AttrRel" class="text-danger"></span>
+            </div>
+            <div class="form-group col-sm-3" id="attr0SpIn">
+                <label for="attr0SpInInput">Special Instructions</label>
+                <input asp-for="Attributes[0].AttrSpIn" type="text" class="form-control" id="attr0SpInInput" />
+                <span asp-validation-for="Attributes[0].AttrSpIn" class="text-danger"></span>
+            </div>
+            <div class="form-group col-sm-1" id="attrButton">
+            </div>
+            @if (Model.FailVal)
+            {
+                byte i = 0;
+                foreach (var item in Model.Attributes)
+                {
+                    string id = "attr" + i;
+                    string inputId = "attr" + i + "Input";
+                    string idRel = "attr" + i + "Rel";
+                    string inputIdRel = "attr" + i + "RelInput";
+                    string idSp = "attr" + i + "SpIn";
+                    string inputIdSp = "attr" + i + "SpInInput";
+                    if (i != 0)
+                    {
+                        <div class="form-group col-sm-4" id="@id">
+                            <label for="@inputId">Attribute</label>
+                            <select asp-for="Attributes[i].Attr" onchange="releaseUpdate(@i)" class="form-control" id="@inputId">
+                                <option value="">Choose an attribute</option>
+                                @foreach (KeyValuePair<string, string> pair in Model.AttrDict)
+                                {
+                                    @if (Model.Attributes[i].Attr == pair.Key)
+                                    {
+                                        <option value="@pair.Key" selected>@pair.Value</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@pair.Key">@pair.Value</option>
+                                    }
+                                }
+                            </select>
+                            <span asp-validation-for="Attributes[i].Attr" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-sm-4" id="@idRel">
+                            <label for="@inputIdRel">Release Name</label>
+                            <input asp-for="Attributes[i].AttrRel" type="text" class="form-control" value="@Model.Attributes[i].AttrRel" id="@inputIdRel" />
+                            <span asp-validation-for="Attributes[i].AttrRel" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-sm-4" id="@idSp">
+                            <label for="@inputIdSp">Special Instructions</label>
+                            <input asp-for="Attributes[i].AttrSpIn" type="text" class="form-control" id="@inputIdSp" />
+                            <span asp-validation-for="Attributes[i].AttrSpIn" class="text-danger"></span>
+                        </div>
+                    }
+                    i++;
+                }
+            }
+        </div>
+
+        <div class="col-sm" id="add">
+            <button type="button" class="btn btn-secondary" id="plusAttr"><span class="glyphicon glyphicon-plus" aria-hidden="true" title="Add"></span></button>
+        </div>
+    </fieldset>
+    <!--Submit Button-->
+    <div class="form-group col-md-12 text-center" id="submit">
+        <input type="submit" id="submit" value="Submit" class="btn btn-default" />
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        // this function runs right when TechForm view renders, shorthand for $(document).ready
+        // sets up the initial state/layout of TechForm view
+        $(function () {
+            // hide everything that should be hidden at first, or that will be conditionally shown later
+            $('#acsProd').hide();
+            $('#acsDev').hide();
+            $('#entityProd').hide();
+            $('#entityDev').hide();
+            $('#metadataProd').hide();
+            $('#metadataDev').hide();
+            $('#metadataXMLDev').hide();
+            $('#metadataXMLProd').hide();
+            $('#samlInfo').hide();
+            $('#base').hide();
+            $('#nameID').hide();
+            $('#userAttribute').hide();
+            // if the user is the requestor accessing the tech details form without being the technical contact
+            // then give them a button that sends the form to the tech contact
+            if ("@Model.ReqAccessTech" == "True") {
+                $('#sendToTech').show();
+            } else {
+                $('#sendToTech').hide();
+            }
+
+            if ("@Model.MoreAttr" == "True") {
+                $('#attributeRelease').show()
+                $('#moreAttr').prop("checked", true);
+            } else {
+                $('#attributeRelease').hide();
+            }
+
+            //sets Protocol field based on what was entered in the Request form
+            switch ("@Model.Protocol") {
+                case "CAS":
+                    $('#cas').click();
+                    $('#samlDefault').prop("checked", true);
+                    break;
+                case "SAML":
+                    $('#saml').click();
+                    break;
+                case "unknown":
+            }
+
+            if ("@Model.ProdAndDev" == "True") {
+                $('#pdYes').click();
+            } else {
+                $('#pdNo').click();
+            }
+
+            if ($('#samlDefault').is(":checked")) {
+                // do nothing
+            } else if ($('#saml1').is(':checked')) {
+                $('#saml1').prop("checked", true);
+                $('#saml1').click();
+            } else if ($('#saml2').is(':checked')) {
+                $('#saml2').prop("checked", true);
+                $('#saml2').click();
+            } else if ($('#saml3').is(':checked')) {
+                $('#saml3').prop("checked", true);
+                $('#saml3').click();
+            }
+        });
+
+        var ProdAndDev = new Boolean(true);
+        var attrNum = Number(0);
+        // shows all divs for attribute n
+        function ShowAttr(n) {
+            var attr = `
+                <div class="form-group col-sm-4" id="attr${n}">
+                    <select name="Attributes[${n}].Attr" onchange="releaseUpdate(${n})" class="form-control" id="attr${n}Input">
+                        <option value="">Choose an attribute</option>
+                        @foreach (KeyValuePair<string, string> pair in Model.AttrDict)
+                        {
+                        <option value="@pair.Key">@pair.Value</option>
+                        }
+                    </select>
+                    <span class="text-danger field-validation-valid" data-valmsg-for="Attributes[${n}].Attr" data-valmsg-replace="true"></span>
+                </div>
+            `;
+            var attrRel = `
+                <div class="form-group col-sm-4" id="attr${n}Rel">
+                    <input name="Attributes[${n}].AttrRel" type="text" class="form-control" id="attr${n}RelInput" />
+                    <span class="text-danger field-validation-valid" data-valmsg-for="Attributes[${n}].Attr" data-valmsg-replace="true"></span>
+                </div>
+            `;
+            var attrSpIn = `
+                <div class="form-group col-sm-3" id="attr${n}SpIn">
+                    <input asp-for="Attributes[${n}].AttrSpIn" type="text" class="form-control" id="attr${n}SpInInput" />
+                    <span asp-validation-for="Attributes[${n}].AttrSpIn" class="text-danger"></span>
+                </div>
+            `;
+            var attrButton = `
+                <div class="form-group col-sm-1" id="attr${n}Button">
+                    <button type="button" class="btn btn-secondary" onclick= HideAttr(${n}) id="minusAttrRow"><span class="glyphicon glyphicon-minus" title="Delete"></span></button>
+                </div>
+            `;
+            $('#attrAppend').append(attr);
+            $('#attrAppend').append(attrRel);
+            $('#attrAppend').append(attrSpIn);
+            $('#attrAppend').append(attrButton);
+
+        }
+
+        // hides all divs for attribute n
+        function HideAttr(n) {
+            $('#attr' + n).remove();
+            $('#attr' + n + "Rel").remove();
+            $('#attr' + n + "SpIn").remove();
+            $('#attr' + n + "Button").remove();
+        }
+
+        // Adds event listening and defines function to be triggered for dropdown menus
+        function releaseUpdate(x) {
+            $('#attr' + x + 'RelInput').val($('#attr' + x + 'Input').val());
+        }
+
+        // Event handler for "Release Additional Attributes" checkbox
+        $('#moreAttr').click(function () {
+            if ($('#moreAttr').is(":checked")) {
+                $('#attributeRelease').show();
+            } else {
+                $('#attributeRelease').hide();
+            }
+        });
+
+        // Event handler for - button in Attribute Release Info
+        $('#minusAttr').click(function () {
+            if (attrNum > 0) {
+                HideAttr(attrNum--);
+            } else if (attrNum == 0) {
+                attrNum = -1;
+                $('#attr0').hide();
+                $('#attr0Rel').hide();
+                $('#attr0SpIn').hide();
+                $('#attr0Button').hide();
+
+                $('#attr0Input').val(0);
+                $('#attr0RelInput').val("");
+                $('#attr0SpInInput').val("");
+                $('#attr0Button').val("");
+            }
+        });
+
+        // Event handler for + button in Attribute Release Info
+        $('#plusAttr').click(function () {
+            if (attrNum == -1) {
+                attrNum = 0;
+                $('#attr0').show();
+                $('#attr0Rel').show();
+                $('#attr0SpIn').show();
+                $('#attr0Button').show();
+            } else if (attrNum < @Model.AttrDict.Count * @Model.AttrMult) {
+                ShowAttr(++attrNum);
+            }
+        });
+
+        // Event handler for format drop-down menu
+        $('#opTransient').select(function () {
+                $('#attributeIn').hide();
+                $('#specialIn').hide();
+                var disabledAttribute = `
+                <div class="form-group col-sm-12" id="attributeIn">
+                    <label for="uniqueIdAttrInput">Attribute<span class="text-danger">*</span></label>
+                    <select asp-for="UniqueIdAttr" class="form-control" id="uniqueIdAttrInput" disabled >
+                    <option value="">Choose an attribute</option>
+                    @foreach (KeyValuePair<string, string> pair in Model.AttrDict)
+                     {
+                        <option value="@pair.Key">@pair.Value</option>
+                     }
+                    </select>
+                    <span asp-validation-for="UniqueIdAttr" class="text-danger"></span>
+                </div>
+            `;
+                var disabledSpecial = `
+                <div class="form-group col-sm-12" id="specialIn">
+                    <label for="uniqueIdSpInInput">Special Instructions (e.g. append @@sampleuniversity.edu)</label>
+                    <input asp-for="UniqueIdSpIn" type="text" class="form-control" id="uniqueIdSpInInput" disabled />
+                    <span asp-validation-for="UniqueIdSpIn" class="text-danger"></span>
+                </div>
+            `;
+                $('#nameID').append(disabledAttribute);
+                $('#nameID').append(disabledSpecial);
+        });
+
+        //logic for what happens when 'CAS' is clicked
+        $('#cas').click(function () {
+            $('#samlInfo').hide();
+            $('#base').show();
+            $('#userAttribute').show();
+            $('#nameID').hide();
+            $('#samlDefault').click();
+
+            if ($('#baseProdInput').val() == "n/a") {
+                $('#baseProdInput').val("");
+            }
+
+            if ($('#baseDevInput').val() == "n/a") {
+                $('#baseDevInput').val("");
+            }
+
+            if (ProdAndDev) {
+                $('#baseProd').show();
+            } else {
+                $('#baseProd').hide();
+                $('#baseProdInput').val("n/a")
+            }
+
+            $('#entityDevInput').val("n/a");
+            $('#entityProdInput').val("n/a");
+            $('#acsDevInput').val("n/a");
+            $('#acsProdInput').val("n/a");
+            $('#metadataDevInput').val("n/a");
+            $('#metadataProdInput').val("n/a");
+            $('#metadataXMLDevInput').val("n/a");
+            $('#metadataXMLProdInput').val("n/a");
+        });
+
+        //logic for what happens when 'SAML' is clicked
+        $('#saml').click(function () {
+            let tags = ['entityDevInput', 'entityProdInput', 'acsDevInput', 'acsProdInput',
+                'metadataDevInput', 'metadataProdInput', 'metadataXMLDevInput', 'metadataXMLProdInput'];
+
+            tags.forEach(clearer);
+
+            function clearer(value) {
+                if ($('#' + value).val() == "n/a") {
+                    $('#' + value).val("");
+                }
+            }
+
+            $('#baseProdInput').val("n/a");
+            $('#baseDevInput').val("n/a");
+
+            $('#samlInfo').show();
+            $('#nameID').show();
+            $('#userAttribute').hide();
+            $('#base').hide();
+        });
+
+        $('#pdYes').click(function () {
+            ProdAndDev = true;
+
+            $('#noProdDev1').hide();
+            $('#prodDev1').show();
+            $('#noProdDev2').hide();
+            $('#prodDev2').show();
+            $('#noProdDev3').hide();
+            $('#prodDev3').show();
+            $('#noProdDev4').hide();
+            $('#prodDev4').show();
+            $('#noProdDev5').hide();
+            $('#prodDev5').show();
+
+            if ($('#cas').is(":checked")) {
+                $('#cas').click();
+            } else {
+                samlUpdate();
+            }
+        });
+
+        $('#pdNo').click(function () {
+            ProdAndDev = false;
+
+            $('#noProdDev1').show();
+            $('#prodDev1').hide();
+            $('#noProdDev2').show();
+            $('#prodDev2').hide();
+            $('#noProdDev3').show();
+            $('#prodDev3').hide();
+            $('#noProdDev4').show();
+            $('#prodDev4').hide();
+            $('#noProdDev5').show();
+            $('#prodDev5').hide();
+
+            if ($('#cas').is(":checked")) {
+                $('#cas').click();
+            } else {
+                samlUpdate();
+            }
+        });
+
+        function samlUpdate() {
+            if ($('#saml1').is(":checked")) {
+                $('#saml1').click();
+            } else if ($('#saml2').is(":checked")) {
+                $('#saml2').click();
+            } else if ($('#saml3').is(":checked")) {
+                $('#saml3').click();
+            }
+        }
+
+        //logic for what happens when 'metadata' SAML option is clicked
+        $('#saml1').click(function () {
+            if ($('#metadataDevInput').val() == "n/a") {
+                $('#metadataDevInput').val("");
+            }
+            if ($('#metadataProdInput').val() == "n/a") {
+                $('#metadataProdInput').val("");
+            }
+            if (ProdAndDev) {
+                $('#metadataProd').show();
+            } else {
+                $('#metadataProd').hide();
+                $('#metadataProdInput').val("n/a");
+            }
+
+            $('#metadataDev').show();
+
+            $('#entityDev').hide();
+            $('#entityProd').hide();
+            $('#acsDev').hide();
+            $('#acsProd').hide();
+            $('#metadataXMLDev').hide();
+            $('#metadataXMLProd').hide();
+
+            $('#entityDevInput').val("n/a");
+            $('#entityProdInput').val("n/a");
+            $('#acsDevInput').val("n/a");
+            $('#acsProdInput').val("n/a");
+            $('#metadataXMLDevInput').val("n/a");
+            $('#metadataXMLProdInput').val("n/a");
+        });
+
+        //logic for what happens when 'saml2' SAML option is clicked
+        $('#saml2').click(function () {
+            if ($('#entityDevInput').val() == "n/a") {
+                $('#entityDevInput').val("");
+                $('#acsDevInput').val("");
+            }
+
+            if ($('#entityProdInput').val() == "n/a") {
+                $('#entityProdInput').val("");
+                $('#acsProdInput').val("");
+            }
+
+            if (ProdAndDev) {
+                $('#entityProd').show();
+                $('#acsProd').show();
+            } else {
+                $('#entityProd').hide();
+                $('#acsProd').hide();
+                $('#entityProdInput').val("n/a");
+                $('#acsProdInput').val("n/a");
+            }
+
+            $('#entityDev').show();
+            $('#acsDev').show();
+
+            $('#metadataDev').hide();
+            $('#metadataProd').hide();
+            $('#metadataXMLDev').hide();
+            $('#metadataXMLProd').hide();
+
+            $('#metadataDevInput').val("n/a");
+            $('#metadataProdInput').val("n/a");
+            $('#metadataXMLDevInput').val("n/a");
+            $('#metadataXMLProdInput').val("n/a");
+        });
+
+        // Logic for metadataXML saml option
+        $('#saml3').click(function () {
+            if ($('#metadataXMLDevInput').val() == "n/a") {
+                $('#metadataXMLDevInput').val("");
+            }
+
+            if ($('#metadataXMLProdInput').val() == "n/a") {
+                $('#metadataXMLProdInput').val("");
+            }
+
+            if (ProdAndDev) {
+                $('#metadataXMLProd').show();
+            } else {
+                $('#metadataXMLProd').hide();
+                $('#metadataXMLProdInput').val("n/a");
+            }
+
+            $('#metadataXMLDev').show();
+
+            $('#metadataDev').hide();
+            $('#metadataProd').hide();
+            $('#entityDev').hide();
+            $('#entityProd').hide();
+            $('#acsDev').hide();
+            $('#acsProd').hide();
+
+            $('#metadataDevInput').val("n/a");
+            $('#metadataProdInput').val("n/a");
+            $('#entityDevInput').val("n/a");
+            $('#entityProdInput').val("n/a");
+            $('#acsDevInput').val("n/a");
+            $('#acsProdInput').val("n/a");
+        });
+
+        $('#samlDefault').click(function () {
+
+            $('#metadataDev').hide();
+            $('#metadataProd').hide();
+            $('#entityDev').hide();
+            $('#entityProd').hide();
+            $('#acsDev').hide();
+            $('#acsProd').hide();
+            $('#metadataXMLProd').hide();
+            $('#metadataXMLDev').hide();
+
+            $('#metadataDevInput').val("n/a");
+            $('#metadataProdInput').val("n/a");
+            $('#entityDevInput').val("n/a");
+            $('#entityProdInput').val("n/a");
+            $('#acsDevInput').val("n/a");
+            $('#acsProdInput').val("n/a");
+            $('#metadataXMLProdInput').val("n/a");
+            $('#metadataXMLDevInput').val("n/a");
+        });
+    </script>
+}

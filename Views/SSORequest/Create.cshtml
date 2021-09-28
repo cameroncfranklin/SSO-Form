@@ -1,0 +1,413 @@
+﻿@model SSORequestApplication.ViewModels.SSORequestViewModel
+@{
+    Layout = "_Layout";
+    ViewBag.title = "SSO Request";
+
+}
+
+
+<div class="row" id="title">
+    <h1 class="col">
+        @ViewData["title"]
+    </h1>
+</div>
+
+<!--asp-controller and asp-action set where the form data is sent. i.e. /home/create-->
+<form asp-controller="SSORequest" asp-action="Create" method="post" role="form">
+    <!--Html.ValidationSummary() this is where the view tells the user they input something wrong-->
+    <!--Requester Information fieldset-->
+    <fieldset class="row">
+        <legend>Requester Info</legend>
+        <!--Requester Name-->
+        <div class="form-group col-md-12" aria-required="true">
+            <label for="reqName">Requester Name<span class="text-danger">*</span></label>
+            <!--input value is populated with "displayName" attribute from CAS-->
+            <input value="@User.Claims.Where(c => c.Type == "displayName").Select(c => c.Value).SingleOrDefault()" class="form-control" id="reqName" disabled/>
+        </div>
+        <!--Requester Department-->
+        <div class="form-group col-md-12" aria-required="true">
+            <label for="reqCompany">Requester Department<span class="text-danger">*</span></label>
+            <!--input value is populated with "department" attribute from CAS-->
+            <input value="@User.Claims.Where(c => c.Type == "department").Select(c => c.Value).SingleOrDefault()" class="form-control" id="reqCompany" disabled />
+        </div>
+        <!--Requester Email-->
+        <div class="form-group col-md-12" aria-required="true">
+            <label for="reqEmail">Requester Email<span class="text-danger">*</span></label>
+            <!--input value is populated with "mail" attribute from CAS-->
+            <input value="@User.Claims.Where(c => c.Type == "mail").Select(c => c.Value).SingleOrDefault()" class="form-control" id="reqEmail" disabled />
+        </div>
+        <!--Requester Phone-->
+        <div class="form-group col-md-12" aria-required="true">
+            <label for="reqPhone">Requester Phone<span class="text-danger">*</span></label>
+            <input asp-for="RequesterPhone" onpaste="phonePaste(this)" class="form-control" id="reqPhone" />
+            <span asp-validation-for="RequesterPhone" class="text-danger"></span>
+        </div>
+    </fieldset>
+
+    <!--Technical Contact Information-->
+    <fieldset class="row">
+        <legend>Technical Contact Information</legend>
+        <!--Tech is same as requester checkbox-->
+        <div class="form-group col-md-12" aria-required="true">
+            <label for="techSame">Same as Requester</label>
+            <input asp-for="TechSame" type="checkbox" id="techSame" />
+        </div>
+        <!--Technical Contact Name-->
+        <div class="form-group col-md-12" id="techDiv1" aria-required="true">
+            <label for="techName">Technical Contact Name<span class="text-danger">*</span></label>
+            <input asp-for="TechnicalName" class="form-control" id="techName" />
+            <span asp-validation-for="TechnicalName" class="text-danger"></span>
+        </div>
+        <!--Technical Contact Company-->
+        <div class="form-group col-md-12" id="techDiv2" aria-required="true">
+            <label for="techCompany">Technical Contact Company<span class="text-danger">*</span></label>
+            <input asp-for="TechnicalCompany" class="form-control" id="techCompany" />
+            <span asp-validation-for="TechnicalCompany" class="text-danger"></span>
+        </div>
+        <!--Technical Contact Email-->
+        <div class="form-group col-md-12" id="techDiv3" aria-required="true">
+            <label for="techEmail">Technical Contact Email<span class="text-danger">*</span></label>
+            <input asp-for="TechnicalEmail" class="form-control" id="techEmail" />
+            <span asp-validation-for="TechnicalEmail" class="text-danger"></span>
+        </div>
+        <!--Technical Contact Phone-->
+        <div class="form-group col-md-12" id="techDiv4" aria-required="true">
+            <label for="techPhone">Technical Contact Phone<span class="text-danger">*</span></label>
+            <input asp-for="TechnicalPhone" onpaste="phonePaste(this)" class="form-control" id="techPhone" />
+            <span asp-validation-for="TechnicalPhone" class="text-danger"></span>
+        </div>
+    </fieldset>
+
+    <!--Administrative Contact Information-->
+    <fieldset class="row">
+        <legend>Administrative Contact Information</legend>
+        <div class="form-group col-md-12" aria-required="true">
+            <label for="adminSame">Same as Requester</label>
+            <input asp-for="AdminSame" type="checkbox" id="adminSame" />
+        </div>
+        <!--Admin Contact Name-->
+        <div class="form-group col-md-12" id="adminDiv1" aria-required="true">
+            <label for="adminName">Admin Name<span class="text-danger">*</span></label>
+            <input asp-for="AdminName" id="adminName" class="form-control" />
+            <span asp-validation-for="AdminName" class="text-danger"></span>
+        </div>
+        <!--Admin Contact Company-->
+        <div class="form-group col-md-12" id="adminDiv2" aria-required="true">
+            <label for="adminCompany">Admin Company<span class="text-danger">*</span></label>
+            <input asp-for="AdminCompany" id="adminCompany" class="form-control" />
+            <span asp-validation-for="AdminCompany" class="text-danger"></span>
+        </div>
+        <!--admin Contact Email-->
+        <div class="form-group col-md-12" id="adminDiv3" aria-required="true">
+            <label for="adminEmail">Admin Email<span class="text-danger">*</span></label>
+            <input asp-for="AdminEmail" id="adminEmail" class="form-control" />
+            <span asp-validation-for="AdminEmail" class="text-danger"></span>
+        </div>
+        <!--admin Contact Phone-->
+        <div class="form-group col-md-12" id="adminDiv4" aria-required="true">
+            <label for="adminPhone">Admin Phone<span class="text-danger">*</span></label>
+            <input asp-for="AdminPhone" onpaste="phonePaste(this)" id="adminPhone" class="form-control" />
+            <span asp-validation-for="AdminPhone" class="text-danger"></span>
+        </div>
+    </fieldset>
+
+    <!--Application Information-->
+    <fieldset class="row">
+        <legend>Application Information</legend>
+        <!--Application Name-->
+        <div class="form-group col-md-12" aria-required="true">
+            <label for="appName">Name<span class="text-danger">*</span></label>
+            <input asp-for="AppName" class="form-control" id="appName" />
+            <span asp-validation-for="AppName" class="text-danger"></span>
+        </div>
+        <!--Launch Date-->
+        <div class="form-group col-md-12" aria-required="true">
+            <label for="launchDate">Proposed Launch Date<span class="text-danger">*</span></label>
+            <label id="legalese">
+                Select a date at least one month or more from today.
+                This date is not a guarantee of completion and will depend on the work required
+                and the workload of the Application Development team member assigned to your project.
+            </label>
+            <input asp-for="LaunchDate" class="form-control" id="launchDate" />
+            <span asp-validation-for="LaunchDate" class="text-danger"></span>
+        </div>
+        <!--Restricted Data?-->
+        <div class="form-group col-md-12" aria-required="true">
+            <label>Does the application handle <a href="@ViewData["restricted"]">RESTRICTED</a> data?<span class="text-danger">*</span></label>
+            <div id="restricted">
+                <label for="resYes"><input asp-for="RestrictedData" type="radio" value="yes" id="resYes" /> Yes </label>
+                <label for="resNo"><input asp-for="RestrictedData" type="radio" value="no" id="resNo" /> No </label>
+                <label for="resIdk"><input asp-for="RestrictedData" type="radio" value="unknown" id="resIdk" /> I don't know </label>
+                <span asp-validation-for="RestrictedData" class="text-danger"></span>
+            </div>
+        </div>
+        <!--Reviewed?-->
+        <div class="form-group col-md-12" aria-required="true">
+            <label>Has this application been reviewed by Sample University's Information Security Office?<span class="text-danger">*</span></label>
+            <div>
+                <label id="isoYes"><input asp-for="Reviewed" type="radio" value="yes" /> Yes </label>
+                <label id="isoNo"><input asp-for="Reviewed" type="radio" value="no" /> No </label>
+                <label id="isoIdk"><input asp-for="Reviewed" type="radio" value="unknown" /> I don't know </label>
+                <span asp-validation-for="Reviewed" class="text-danger"></span>
+            </div>
+        </div>
+        <!--Memorandum of Understanding?-->
+        <div class="form-group col-md-12" id="mou" aria-required="true">
+            <label>Have you signed a Memorandum of Understanding for this app with Sample University's Information Security Office?<span class="text-danger">*</span></label>
+            <div>
+                <label><input asp-for="Memorandum" type="radio" value="yes" id="mouYes" /> Yes </label>
+                <label><input asp-for="Memorandum" type="radio" value="no" id="mouNo" /> No </label>
+                <input asp-for="Memorandum" type="radio" value="n/a" id="mouDef" hidden />
+                <span asp-validation-for="Memorandum" class="text-danger"></span>
+            </div>
+        </div>
+        <!--Protocol?-->
+        <div class="form-group col-md-12" aria-required="true">
+            <label>What protocol does the application use?<span class="text-danger">*</span></label>
+            <div>
+                <label id="radio"><input asp-for="Protocol" type="radio" value="CAS" /> CAS </label>
+                <label id="radio"><input asp-for="Protocol" type="radio" value="SAML" /> SAML </label>
+                <label id="protoIDK"><input asp-for="Protocol" type="radio" value="unknown" id="protoIDKInput" /> I don't know </label>
+                <span asp-validation-for="Protocol" class="text-danger"></span>
+            </div>
+        </div>
+    </fieldset>
+    <!--Create Button-->
+    <div class="form-group col-md-12 text-center">
+        <input id="submit" type="submit" value="Create" class="btn btn-default" role="button"/>
+    </div>
+</form>
+
+@section Scripts
+{
+    <script>
+        // inits some booleans for keeping track of tracking tech and admin and if the user pasted into phone number sections
+        var trackTech = new Boolean(false);
+        var trackAdmin = new Boolean(false);
+        var pasted = new Boolean(false);
+        //this javascript runs when view is rendered. Shorthand for $(document).ready(function())
+        $(function () {
+            //This is a jQuery function to make an easy to work with and interactive date picker.
+            //minDate sets the minimum date allowed relative to the current day
+            $("#launchDate").datepicker({ minDate: +28 });
+            if ($('#isoYes').is(":checked")) {
+                $("#mou").show();
+            } else {
+                $("#mou").hide();
+            }
+
+            trackTech = false;
+            trackAdmin = false;
+
+            if ($('#techSame').is(":checked")) {
+                $('#techSame').prop("checked", false);
+                $('#techSame').click();
+            }
+
+            if ($('#adminSame').is(":checked")) {
+                $('#adminSame').prop("checked", false);
+                $('#adminSame').click();
+            }
+        });
+        
+        // is called "onpaste" for phone number fields
+        function phonePaste(s) {
+            pasted = true;
+            $phone = $(s);
+            // if a phone number was pasted, then checks that the first character is taken off if it is a '('
+            if ($phone.val().charAt(0) == '(') {
+                $phone.val($phone.val().slice(1, $phone.val().length));
+            }
+        };
+
+        // string of functions and event listeners that watch/get called by the phone fields.
+        // Acts as a input mask
+        $('#reqPhone, #techPhone, #adminPhone')
+            .keyup(function (e) {
+                var key = e.which || e.charCode || e.keyCode || 0;
+                $phone = $(this);
+
+                // Don't let them remove the starting '('
+                if ($phone.val().length === 1 && (key === 8 || key === 46)) {
+                    $phone.val('(');
+                    return false;
+                }
+                // Reset if they highlight and type over first char.
+                else if ($phone.val().charAt(0) !== '(') {
+                    setTimeout(() => {
+                        if (!pasted) {
+                            $phone.val('(' + $phone.val());
+                        } else {
+                            pasted = false;
+                        }
+                    }, 100);
+                }
+
+                // Auto-format- do not expose the mask as the user begins to type
+                if (key !== 8 && key !== 9) {
+                    if ($phone.val().length === 4) {
+                        $phone.val($phone.val() + ')');
+                    }
+                    if ($phone.val().length === 5) {
+                        $phone.val($phone.val() + ' ');
+                    }
+                    if ($phone.val().length === 9) {
+                        $phone.val($phone.val() + '-');
+                    }
+                    if ($phone.val().length >= 15) {
+                        $phone.val($phone.val().slice(0, -1));
+                    }
+                }
+
+                // Allow numeric (and tab, backspace, delete) keys only
+                return (key == 8 ||
+                    key == 9 ||
+                    key == 46 ||
+                    (key >= 48 && key <= 57) ||
+                    (key >= 96 && key <= 105));
+            })
+            //what heppens when field is focused on
+            .bind('focus click', function () {
+                $phone = $(this);
+
+                if ($phone.val().length === 0) {
+                    $phone.val('(');
+                }
+                else {
+                    var val = $phone.val();
+                    $phone.val('').val(val); // Ensure cursor remains at the end
+                }
+            })
+            // what happens when user leaves the field, clicks somewhere else
+            .blur(function () {
+                $phone = $(this);
+
+                if ($phone.val() === '(') {
+                    $phone.val('');
+                }
+            });
+
+        //this code handles the "Same as requester" checkbox for technical contact
+        $('#techSame').click(function () {
+            if ($(this).is(':checked')) {
+                $('#techDiv1').hide();
+                $('#techDiv2').hide();
+                $('#techDiv3').hide();
+                $('#techDiv4').hide();
+                //set trackTech so tech fields will start "tracking" with req fields
+                trackTech = true;
+                //sets all tech fields to the current value in their req counterparts
+                $('#techName').val($('#reqName').val());
+                $('#techCompany').val($('#reqCompany').val());
+                $('#techEmail').val($('#reqEmail').val());
+                $('#techPhone').val($('#reqPhone').val());
+
+                $('#protoIDK').hide();
+            }
+            else {
+                $('#techDiv1').show();
+                $('#techDiv2').show();
+                $('#techDiv3').show();
+                $('#techDiv4').show();
+                //set trackTech so tech fields won't track their req counterparts anymore
+                trackTech = false;
+                //reset the values to "" for the user to type
+                if ($('#techName').val() == $('#reqName').val()) {
+                    $('#techName').val("");
+                    $('#techCompany').val("");
+                    $('#techEmail').val("");
+                    $('#techPhone').val("");
+                }
+                // Shows the protocol "I Don't Know" option
+                // Only available if the Requester isn't also the Tech contact
+                $('#protoIDK').show();
+            }
+        });
+
+        //this is exactly the same as the above .click, but for the admin fields
+        $('#adminSame').click(function () {
+            if ($(this).is(':checked')) {
+                $('#adminDiv1').hide();
+                $('#adminDiv2').hide();
+                $('#adminDiv3').hide();
+                $('#adminDiv4').hide();
+                //set trackTech so tech fields will start "tracking" with req fields
+                trackAdmin = true;
+                //sets all tech fields to the current value in their req counterparts
+                $('#adminName').val($('#reqName').val());
+                $('#adminCompany').val($('#reqCompany').val());
+                $('#adminEmail').val($('#reqEmail').val());
+                $('#adminPhone').val($('#reqPhone').val());
+            }
+            else {
+                //set trackTech so tech fields won't track their req counterparts anymore
+                trackAdmin = false;
+
+                if ($('#adminName').val() == $('#reqName').val()) {
+                    $('#adminName').val("");
+                    $('#adminCompany').val("");
+                    $('#adminEmail').val("");
+                    $('#adminPhone').val("");
+                }
+                //reset the values to "" for the user to type
+                $('#adminDiv1').show();
+                $('#adminDiv2').show();
+                $('#adminDiv3').show();
+                $('#adminDiv4').show();
+            }
+        });
+
+        $("#isoYes").click(function () {
+            $("#mou").show();
+        });
+
+        $("#isoNo").click(function () {
+            $("#mou").hide();
+            $("#mouDef").prop("checked", true);
+        });
+
+        $("#isoIdk").click(function () {
+            $("#mou").hide();
+            $("#mouDef").prop("checked", true);
+        });
+
+        // These functions all ensure that the various fields will remain identical to their requester counterparts 
+        // should the user click "Same as Requester" check boxes.
+        $('#reqName').keyup(function () {
+            if (trackTech) {
+                $('#techName').val(this.value);
+            }
+
+            if (trackAdmin) {
+                $('#adminName').val(this.value);
+            }
+        });
+        $('#reqCompany').keyup(function () {
+            if (trackTech) {
+                $('#techCompany').val(this.value);
+            }
+
+            if (trackAdmin) {
+                $('#adminCompany').val(this.value);
+            }
+        });
+        $('#reqEmail').keyup(function () {
+            if (trackTech) {
+                $('#techEmail').val(this.value);
+            }
+
+            if (trackAdmin) {
+                $('#adminEmail').val(this.value);
+            }
+        });
+        $('#reqPhone').keyup(function () {
+            if (trackTech) {
+                $('#techPhone').val(this.value);
+            }
+
+            if (trackAdmin) {
+                $('#adminPhone').val(this.value);
+            }
+        });
+    </script>
+}

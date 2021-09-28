@@ -1,0 +1,133 @@
+﻿/*
+    This css file cascades last, and so will overwrite what is unwanted about the bootstrap.css,
+    and what is unwanted from appdev.css
+    all css linkages are found in Views/Shared/_Layout.cshtml
+*/
+/*
+    this allows the header and body to not overlap
+*/
+body {
+    margin-top: 0;
+}
+
+/*
+    legend was creating border gap across entire width of fieldset, 
+    this makes border gap correct size
+*/
+legend {
+    width:auto;
+    height:auto;
+}
+
+fieldset {
+    width: auto;
+}
+
+nav {
+    background-color: #00205c;
+}
+
+.row {
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
+/*
+    ensures that the content remains centered
+*/
+.container {
+    margin: auto;
+    min-height: calc(100vh - 140px);
+}
+
+/*
+    This makes sure the copyright bar is not too large
+    and is the same size as the footer.
+*/
+.copyright {
+    height: 60px;
+    margin-bottom: 0px;
+}
+
+/*
+    ensures the footer is the same height as copyright div.
+    attempts to make the footer go to the bottom of the screen
+    on pages that don't have a full page worth of content.
+*/
+.footer {
+    height: 60px;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    line-height: 60px;
+}
+
+/*
+
+*/
+.form-inline {
+    flex-flow: nowrap;
+}
+
+/*
+    
+*/
+#True {
+    color: forestgreen;
+}
+
+#False {
+    color: red;
+}
+
+/*
+    adds some padding so that the title isn't so close to the header
+*/
+#finHeader {
+    color: red;
+}
+
+/*
+    adds some padding so that the title isn't so close to the header
+*/
+#title{
+    padding-top: 20px;
+}
+
+/*
+    make launchdate legal text ~75% of normal label font-size
+*/
+#legalese {
+    font-size: 11px;
+}
+
+/*
+    Set's larger margin for submit button divs so they aren't so close to the footer
+*/
+#submit {
+    margin-bottom: 2em;
+    margin-right: 0px;
+}
+
+/*
+    Sets larger margin for Send To Technical Contact button so it isn't so close to the headers
+*/
+#sendToTech {
+    margin-top: 16px;
+}
+
+#uniqueId {
+    clear: left;
+}
+
+#samlDefault {
+    display: none;
+}
+
+#add {
+    float: right;
+}
+
+#attrButton {
+    white-space: pre;
+}
